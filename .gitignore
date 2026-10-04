@@ -8,6 +8,14 @@
 !/herdr/
 herdr/*
 !herdr/config.toml
+!/pi/
+pi/agent/*
+!pi/agent/settings.json
+!pi/agent/mcp.json
+!pi/agent/themes/
+!pi/agent/extensions/
+!pi/agent/skills/
+!pi/agent/agents/
 !/nvim/
 !/starship.toml
 !/zsh/

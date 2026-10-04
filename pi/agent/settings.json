@@ -1,0 +1,30 @@
+{
+  "lastChangelogVersion": "1.0.2",
+  "theme": "fuji-night",
+  "defaultProvider": "commandcode",
+  "defaultModel": "z-ai/glm-5.3-flash",
+  "defaultThinkingLevel": "medium",
+  "modelThinkingLevels": {
+    "deepseek/deepseek-v4-flash": "high"
+  },
+  "tuiMode": "fullscreen",
+  "packages": [
+    "npm:pi-effort",
+    "npm:pi-web-search",
+    "git:github.com/DietrichGebert/ponytail",
+    "npm:pi-commandcode-provider",
+    "npm:pi-observational-memory"
+  ],
+  "pi-effort": {
+    "fastMode": false
+  },
+  "observational-memory": {
+    "model": {
+      "provider": "commandcode",
+      "id": "meta/muse-spark-1.3-contributor",
+      "thinking": "low"
+    }
+  },
+  "hideThinkingBlock": false,
+  "deviceId": "d9e9a7a0-81c9-415c-819b-3aba8b85d88d"
+}
