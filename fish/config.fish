@@ -9,7 +9,7 @@ set -gx TERMINAL ghostty
 set -gx MANPAGER "nvim +Man!"
 
 # PATH
-fish_add_path $HOME/Scripts
+fish_add_path $HOME/.config/scripts
 fish_add_path $HOME/dev-tools/flutter/bin
 fish_add_path $HOME/.pub-cache/bin
 fish_add_path $HOME/.spicetify/bin
