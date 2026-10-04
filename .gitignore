@@ -1,0 +1,18 @@
+# ignore everything…
+/*
+# …except what we explicitly track
+!/.gitignore
+!/README.md
+!/assets/
+!/fish/
+!/ghostty/
+!/nvim/
+!/scripts/
+!/starship.toml
+!/tmux/
+!/vicinae/
+
+# junk
+.DS_Store
+*.bak
+*.bak.*
