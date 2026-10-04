@@ -1,0 +1,49 @@
+onboarding = false
+
+[theme]
+name = "vesper"
+auto_switch = false
+
+# Black Metal overrides on top of Vesper.
+[theme.custom]
+panel_bg = "#141414"
+sidebar_bg = "#141414"
+active_row_bg = "#2b1e1e"
+selection_bg = "#a06666"
+surface0 = "#1c1c1c"
+surface1 = "#242424"
+surface_dim = "#202020"
+overlay0 = "#666666"
+overlay1 = "#888888"
+text = "#c1c1c1"
+subtext0 = "#888888"
+accent = "#dd9999"
+mauve = "#999999"
+green = "#999999"
+yellow = "#a06666"
+red = "#dd9999"
+blue = "#486e6f"
+teal = "#486e6f"
+peach = "#a06666"
+
+[keys]
+# Direct (prefix-free) shortcuts. Each also keeps the default prefix binding.
+new_tab = ["prefix+c", "ctrl+n"]
+split_vertical = ["prefix+v", "ctrl+d"]       # split right
+split_horizontal = ["prefix+minus", "ctrl+x"] # split down
+new_workspace = ["prefix+shift+n", "ctrl+shift+n"]
+close_workspace = ["prefix+shift+d", "ctrl+shift+w"]
+close_tab = ["prefix+shift+x"]
+close_pane = ["prefix+x", "ctrl+w"]
+
+[[keys.command]]
+key = "ctrl+shift+m"
+type = "plugin_action"
+command = "drovr.move-pane"
+description = "move pane to tab"
+
+[[keys.command]]
+key = "ctrl+shift+alt+m"
+type = "plugin_action"
+command = "drovr.move-tab"
+description = "move tab to workspace"

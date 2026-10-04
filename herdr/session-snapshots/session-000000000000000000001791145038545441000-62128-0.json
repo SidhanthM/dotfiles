@@ -1,0 +1,62 @@
+{
+  "version": 3,
+  "workspaces": [
+    {
+      "id": "wN",
+      "custom_name": null,
+      "identity_cwd": "/Users/sid_m",
+      "public_pane_numbers": {
+        "1": 1,
+        "2": 7
+      },
+      "next_public_pane_number": 9,
+      "public_tab_numbers": [
+        1,
+        6
+      ],
+      "next_public_tab_number": 7,
+      "tabs": [
+        {
+          "custom_name": null,
+          "layout": {
+            "Pane": 1
+          },
+          "panes": {
+            "1": {
+              "cwd": "/Users/sid_m",
+              "agent_session": {
+                "source": "herdr:pi",
+                "agent": "pi",
+                "kind": "path",
+                "value": "/Users/sid_m/.pi/agent/sessions/--Users-sid_m--/2026-10-04T17-04-49-861Z_01a107e0-1ac4-75d0-aee2-e22ca02f2c08.jsonl"
+              }
+            }
+          },
+          "zoomed": false,
+          "focused": 1,
+          "root_pane": 1
+        },
+        {
+          "custom_name": null,
+          "layout": {
+            "Pane": 2
+          },
+          "panes": {
+            "2": {
+              "cwd": "/Users/sid_m"
+            }
+          },
+          "zoomed": false,
+          "focused": 2,
+          "root_pane": 2
+        }
+      ],
+      "active_tab": 0
+    }
+  ],
+  "active": 0,
+  "selected": 0,
+  "sidebar_width": null,
+  "sidebar_section_split": null,
+  "collapsed_space_keys": []
+}

@@ -4,13 +4,11 @@
 !/.gitignore
 !/README.md
 !/assets/
-!/fish/
 !/ghostty/
+!/herdr/
 !/nvim/
-!/scripts/
 !/starship.toml
-!/tmux/
-!/vicinae/
+!/zsh/
 
 # junk
 .DS_Store
