@@ -1,50 +1,83 @@
-# Symphony by vyrx
-# Theme: Espresso Harmony
-
+# Black Metal palette — Vesper black, muted steel, dusty pink, and teal
 "$schema" = 'https://starship.rs/config-schema.json'
 
 add_newline = true
 command_timeout = 200
-format = """$hostname$directory$git_branch$git_status$character"""
-palette = "colors"
+palette = "black_metal"
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$git_metrics\
+$fill\
+$nodejs\
+$cmd_duration $jobs\
+$line_break\
+$character"""
 
-[palettes.colors]
-# black-metal-theme
-primary = '#b3c7cc'       # directory, prompt
-secondary = '#9b8d7f'     # git branch
-error = '#653738'         # errors, git status (muted red)
+[palettes.black_metal]
+text = "#c1c1c1"
+muted = "#888888"
+teal = "#52999b"
+blue_gray = "#6d9a9c"
+pink = "#d18588"
+red = "#c85c70"
 
-# espresso-theme
-# primary = '#e8b89a'       # directory, prompt 
-# secondary = '#C97A65'     # git branch
-# error = '#D4776B'         # errors, git status
+[username]
+style_user = "fg:teal"
+style_root = "fg:pink"
 
 [hostname]
 ssh_only = true
-style = "fg:primary"
+style = "fg:muted"
 format = "[@$hostname]($style) "
 
+[nodejs]
+format = "[$symbol($version )](fg:teal)"
+
+[fill]
+symbol = " "
+
 [directory]
-style = "fg:primary bold"
-read_only = " 󰌾"
-read_only_style = "fg:error"
-truncation_length = 3
-truncation_symbol = "…/"
-format = "[$path]($style)[$read_only]($read_only_style) "
+style = "fg:blue_gray bold"
+read_only = " "
+read_only_style = "fg:pink"
+truncation_length = 4
+truncate_to_repo = false
 
 [character]
-success_symbol = '[❯](fg:primary bold)'
-error_symbol = '[❯](fg:error bold)'
+success_symbol = "[❯](fg:pink)"
+error_symbol = "[❯](fg:red)"
+vicmd_symbol = "[❮](fg:teal)"
 
 [git_branch]
-style = "fg:secondary"
-format = '[$branch]($style) '
+symbol = " "
+format = "[$symbol$branch]($style) "
+style = "fg:muted"
+
+[jobs]
+symbol = ""
+style = "bold fg:red"
+number_threshold = 1
+format = "[$symbol]($style)"
 
 [git_status]
-ahead = '⇡${count}'
-behind = '⇣${count}'
-diverged = '⇕⇡${ahead_count}⇣${behind_count}'
-format = '[$all_status$ahead_behind](fg:error) '
+format = '([\[$all_status$ahead_behind\]]($style) )'
+style = "fg:pink"
 
-[line_break]
-disabled = true
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "fg:muted"
+
+[git_metrics]
+disabled = false
+added_style = "fg:teal"
+deleted_style = "fg:pink"
+
+[cmd_duration]
+format = "[$duration]($style)"
+style = "fg:pink"
+

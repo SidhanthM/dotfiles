@@ -20,7 +20,8 @@ pi/agent/*
 !/starship.toml
 !/zsh/
 
-# junk
+# generated / local junk
 .DS_Store
+.zcompdump*
 *.bak
 *.bak.*
