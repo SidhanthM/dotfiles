@@ -6,6 +6,8 @@
 !/assets/
 !/ghostty/
 !/herdr/
+herdr/*
+!herdr/config.toml
 !/nvim/
 !/starship.toml
 !/zsh/
