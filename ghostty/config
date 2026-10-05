@@ -14,7 +14,7 @@ confirm-close-surface=false
 resize-overlay = never
 gtk-toolbar-style = flat
 # gtk-single-instance = false
-background-opacity = 1.0
+background-opacity = 0.91
 background-blur-radius = 10
 
 # Cursor

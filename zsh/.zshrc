@@ -7,6 +7,8 @@ export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
 autoload -U colors && colors
 export CLICOLOR=1
 export COLORTERM=truecolor
+# eza / ls colors: Black Metal teal directories, salmon executables, blue-gray links
+export EZA_COLORS="di=38;2;169;155;208:ex=38;2;209;133;136:ln=38;2;109;154;156:or=38;2;200;92;112:*.tar.gz=38;2;209;133;136:*.iso=38;2;209;133;136:*.dmg=38;2;209;133;136"
 
 # ── Environment ──
 export EDITOR="nvim"

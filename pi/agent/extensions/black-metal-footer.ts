@@ -49,7 +49,7 @@ export default function (pi: ExtensionAPI) {
           const contextPct = usage?.percent == null ? "?" : `${usage.percent.toFixed(1)}%`;
           const context = Number(usage?.percent ?? 0) > 90 ? red(contextPct) : teal(contextPct);
           const contextInfo = `ctx ${context}/${tokens(usage?.contextWindow ?? ctx.model?.contextWindow ?? 0)} ${muted("(auto)")}`;
-          const model = `${ctx.model?.provider ?? "no-provider"} · ${ctx.model?.id ?? "no-model"} · ${ctx.thinkingLevel ?? "off"}`;
+          const model = `${ctx.model?.provider ?? "no-provider"}/${ctx.model?.id ?? "no-model"}:${ctx.thinkingLevel ?? "off"}`;
           const statuses = [...footer.getExtensionStatuses()]
             .filter(([key, value]) => key !== "ponytail" && Boolean(value))
             .map(([, value]) => value)

@@ -11,7 +11,6 @@
   "packages": [
     "npm:pi-effort",
     "npm:pi-web-search",
-    "git:github.com/DietrichGebert/ponytail",
     "npm:pi-commandcode-provider",
     "npm:pi-observational-memory"
   ],
