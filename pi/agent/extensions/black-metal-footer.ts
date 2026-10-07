@@ -1,4 +1,6 @@
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { CustomEditor, getAgentDir, type ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { truncateToWidth } from "@earendil-works/pi-tui";
 
 const color = (hex: string, text: string) => {
@@ -13,7 +15,31 @@ const text = (s: string) => color("#c1c1c1", s);
 const tokens = (n: number) => n >= 1e6 ? `${(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${Math.round(n / 1e3)}k` : `${n}`;
 
 export default function (pi: ExtensionAPI) {
+  const settingsPath = join(getAgentDir(), "settings.json");
   pi.on("session_start", (_event, ctx) => {
+    if (ctx.mode !== "tui") return;
+
+    const bolt = () => {
+      let fast = false;
+      try {
+        fast = JSON.parse(readFileSync(settingsPath, "utf8"))["pi-effort"]?.fastMode === true;
+      } catch { /* Missing or invalid settings: fast mode off. */ }
+      const eligible = ["openai", "openai-codex", "azure-openai-responses"].includes(ctx.model?.provider ?? "") && ctx.model?.id.startsWith("gpt-5");
+      return !fast ? muted("ϟ") : eligible ? teal("ϟ") : pink("ϟ");
+    };
+
+    class FastModeEditor extends CustomEditor {
+      protected override renderTopBorder(width: number, hiddenLineCount: number): string {
+        const border = super.renderTopBorder(width, hiddenLineCount);
+        if (width < 7) return border;
+        const inset = Math.min(10, Math.floor((width - 6) / 2));
+        const cap = color("#202020", "");
+        const badge = cap + `\x1b[48;2;32;32;32m\x1b[1m ${bolt()} \x1b[22;49m` + color("#202020", "");
+        return truncateToWidth(border, width - inset - 5, "") + badge + this.borderColor("─".repeat(inset));
+      }
+    }
+    ctx.ui.setEditorComponent((tui, theme, kb) => new FastModeEditor(tui, theme, kb));
+
     ctx.ui.setFooter((tui, _theme, footer) => {
       const unsubscribe = footer.onBranchChange(() => tui.requestRender());
       return {

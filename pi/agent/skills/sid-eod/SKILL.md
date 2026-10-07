@@ -91,7 +91,7 @@ re-trained each time.
 7. If Sid says "make it more human" or "less AI", strip any formal phrasing and shorten sentences.
 8. If Sid edits and resubmits, carry those edits forward silently — no need to acknowledge each correction.
 9. Output the EOD flush left with no leading tabs or indentation. Every line starts at column 0.
-10. Always normalize spacing (single top heading, one blank line between sections, none elsewhere, one line per bullet) and file the EOD at `/Users/sadith/iCYLON/EOD/<YYYY-MM-DD>-eod.md` (today's date, e.g. `2026-08-25-eod.md`), keeping the emojis. If the file exists, append the new section(s) with one blank line separating from existing content.
+10. Always normalize spacing (single top heading, one blank line between sections, none elsewhere, one line per bullet) and file the EOD in the Obsidian vault at `/Users/sadith/iCYLON/Files/EOD/<YYYY-MM-DD>-eod.md` (today's date, e.g. `2026-10-05-eod.md`), keeping the emojis. If the file exists, append the new section(s) with one blank line separating from existing content.
 
 Output the EOD message directly as plain text, ready to paste. No preamble, no commentary after.
 
@@ -140,3 +140,11 @@ IL5 Backend / Infrastructure:
 🚧 Set up the il5_backend/il5_worker skeleton in the gateway server; uncommitted and not deployed yet.
 ✅ Helped Andrew and Josh get the SSP generator worker on 72.250 live: fixed the launcher so celery launches via absolute path instead of dying on "celery: not found", and pointed it at the Zeus broker and data Redis.
 ```
+
+## Maintenance (agent responsibility)
+
+This skill is owned and maintained by the agent. Keep it current:
+
+- **Update the skill** whenever Sid's EOD conventions change (format, collaborators, project areas, filing path) — this file is the single source of truth.
+- **Track EODs day-to-day**: before writing a new EOD, skim recent files in `/Users/sadith/iCYLON/Files/EOD/` for continuity (in-flight 🚧 items, open ⚠️ blockers) and reference them where relevant.
+- **Fix drift on sight**: if an EOD you're editing violates the spacing/heading rules above, normalize it in place.
