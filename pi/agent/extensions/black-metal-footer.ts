@@ -63,6 +63,7 @@ export default function (pi: ExtensionAPI) {
           const branch = footer.getGitBranch();
           const cwd = ctx.sessionManager.getCwd().replace(process.env.HOME ?? "\0", "~");
           const location = `${pink(cwd)}${branch ? ` ${muted("(")}${teal(branch)}${muted(")")}` : ""}`;
+          const separator = muted(" · ");
           const stats = [
             `${teal("↑")}${text(tokens(input))}`,
             `${pink("↓")}${text(tokens(output))}`,
@@ -70,18 +71,46 @@ export default function (pi: ExtensionAPI) {
             ...(cacheWrite ? [text(`write ${tokens(cacheWrite)}`)] : []),
             ...(cacheHit !== undefined ? [text(`cache ${cacheHit.toFixed(1)}%`)] : []),
             red(`$${cost.toFixed(3)}`),
-          ].join(muted(" · "));
+          ].join(separator);
+          const compactStats = [
+            `${teal("↑")}${text(tokens(input))}`,
+            `${pink("↓")}${text(tokens(output))}`,
+            ...(cacheRead ? [text(`R${tokens(cacheRead)}`)] : []),
+            ...(cacheWrite ? [text(`W${tokens(cacheWrite)}`)] : []),
+            ...(cacheHit !== undefined ? [text(`C${Math.round(cacheHit)}%`)] : []),
+            red(`$${cost.toFixed(3)}`),
+          ].join(separator);
           const usage = ctx.getContextUsage();
           const contextPct = usage?.percent == null ? "?" : `${usage.percent.toFixed(1)}%`;
           const context = Number(usage?.percent ?? 0) > 90 ? red(contextPct) : teal(contextPct);
           const contextInfo = `ctx ${context}/${tokens(usage?.contextWindow ?? ctx.model?.contextWindow ?? 0)} ${muted("(auto)")}`;
+          const compactContext = `ctx ${context}`;
           const model = `${ctx.model?.provider ?? "no-provider"}/${ctx.model?.id ?? "no-model"}:${ctx.thinkingLevel ?? "off"}`;
           const statuses = [...footer.getExtensionStatuses()]
             .filter(([key, value]) => key !== "ponytail" && Boolean(value))
             .map(([, value]) => value)
             .join("  ");
-          const line = [location, stats, contextInfo, pink(model), statuses].filter(Boolean).join(muted(" · "));
-          return [truncateToWidth(line, width)];
+          const fullLine = [location, stats, contextInfo, pink(model), statuses].filter(Boolean).join(separator);
+          const mediumLine = [compactStats, contextInfo, pink(model)].join(separator);
+          // Footer values are ASCII apart from the single-cell arrows; strip ANSI
+          // before measuring so the layout can adapt before the TUI clips it.
+          const visibleLength = (value: string) => value.replace(/\x1b\[[0-?]*[ -/]*[@-~]/g, "").length;
+          if (visibleLength(fullLine) <= width) return [fullLine];
+          if (visibleLength(mediumLine) <= width) return [mediumLine];
+
+          // In narrow panes, give the model/provider/effort its own row. Keep
+          // context, cost and token flow on the second row instead of losing the
+          // right-hand side to arbitrary truncation.
+          const modelLine = pink(model);
+          const compactCost = red(`$${cost.toFixed(3)}`);
+          const compactUsage = [compactContext, compactCost].join(separator);
+          const narrowStats = [
+            `${teal("↑")}${text(tokens(input))}`,
+            `${pink("↓")}${text(tokens(output))}`,
+            ...(cacheHit !== undefined ? [text(`C${Math.round(cacheHit)}%`)] : []),
+          ].join(separator);
+          const narrowLine = [narrowStats, compactUsage].join(separator);
+          return [truncateToWidth(modelLine, width), truncateToWidth(narrowLine, width)];
         },
       };
     });
