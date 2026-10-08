@@ -16,6 +16,8 @@ pi/agent/*
 !pi/agent/themes/
 !pi/agent/extensions/
 !pi/agent/skills/
+# Company-specific work skill: keep it out of this repo.
+pi/agent/skills/sid-eod/
 !pi/agent/agents/
 !/nvim/
 !/starship.toml
