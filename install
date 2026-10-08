@@ -1,0 +1,265 @@
+#!/bin/bash
+# Personal Apple Silicon macOS bootstrap. Never deletes unrelated app state.
+set -euo pipefail
+
+SOURCE="$(cd "$(dirname "$0")" && pwd -P)"
+TARGET="$HOME/.config"
+DRY_RUN=0
+YES=0
+NVIM=0
+BACKUP=""
+STEP=0
+TOTAL=8
+CURRENT_STAGE="Setup"
+RESET='' PINK='' TEAL='' LAVENDER='' GREEN='' RED='' DIM='' BOLD=''
+if [ -t 1 ] && [ "${TERM:-dumb}" != dumb ] && [ "${NO_COLOR+x}" != x ]; then
+  RESET=$'\033[0m' PINK=$'\033[38;2;221;153;153m'
+  TEAL=$'\033[38;2;114;147;150m' LAVENDER=$'\033[38;2;169;155;208m'
+  GREEN=$'\033[38;2;143;165;156m' RED=$'\033[38;2;185;130;135m'
+  DIM=$'\033[2m' BOLD=$'\033[1m'
+fi
+info() { printf '  %s•%s %s\n' "$TEAL" "$RESET" "$*"; }
+ok() { printf '  %s✓%s %s\n' "$GREEN" "$RESET" "$*"; }
+note() { printf '  %s→%s %s\n' "$LAVENDER" "$RESET" "$*"; }
+stage() {
+  if [ "$STEP" -gt 0 ]; then
+    if [ "$DRY_RUN" -eq 1 ]; then note 'Stage previewed'; else ok 'Stage complete'; fi
+  fi
+  STEP=$((STEP + 1))
+  CURRENT_STAGE="$1"
+  printf '\n%s%s[%s/%s] %s%s\n' "$BOLD" "$PINK" "$STEP" "$TOTAL" "$1" "$RESET"
+  printf '%s────────────────────────────────────────────────────%s\n' "$DIM" "$RESET"
+  info "$2"
+}
+usage() {
+  printf '%s\n' 'Usage: ./install [--dry-run] [--yes] [--with-nvim]' \
+    '  --dry-run    Print the plan; no writes, downloads or installs.' \
+    '  --yes        Skip this script’s confirmation and approve Herdr plugins.' \
+    '               Official installers may still ask their own questions.' \
+    '  --with-nvim  Install Neovim and restore lazy.nvim plugins (executes plugin code).'
+}
+for arg in "$@"; do
+  case "$arg" in
+    --dry-run) DRY_RUN=1 ;;
+    --yes) YES=1 ;;
+    --with-nvim) NVIM=1 ;;
+    -h|--help) usage; exit 0 ;;
+    *) usage >&2; exit 2 ;;
+  esac
+done
+[ "$NVIM" -eq 0 ] || TOTAL=9
+fail() { printf '\n%s✗ %s: %s%s\n' "$RED" "$CURRENT_STAGE" "$*" "$RESET" >&2; exit 1; }
+run() {
+  printf '  %s$ ' "$DIM"; printf '%q ' "$@"; printf '%s\n' "$RESET"
+  if [ "$DRY_RUN" -eq 0 ]; then
+    if "$@"; then ok "$1 finished"; else fail "Command failed: $*"; fi
+  fi
+}
+backup() {
+  local path="$1" rel
+  [ -e "$path" ] || [ -L "$path" ] || return 0
+  if [ -z "$BACKUP" ]; then
+    BACKUP="$HOME/.dotfiles-backups/$(date +%Y%m%d-%H%M%S)-$$"
+    mkdir -p "$BACKUP"
+    chmod 700 "$HOME/.dotfiles-backups" "$BACKUP"
+  fi
+  rel="${path#"$HOME"/}"
+  mkdir -p "$BACKUP/$(dirname "$rel")"
+  cp -pP "$path" "$BACKUP/$rel"
+  note "Backed up $path"
+}
+# Refuse symlink directories: otherwise config copies can escape the destination.
+check_parents() {
+  local parent="$1"
+  while [ "$parent" != "$HOME" ] && [ "$parent" != / ]; do
+    [ ! -L "$parent" ] || fail "Symlink directory: $parent. Migrate it to real files first."
+    [ ! -e "$parent" ] || [ -d "$parent" ] || fail "Not a directory: $parent"
+    parent="$(dirname "$parent")"
+  done
+}
+
+printf '\n%s%sDOTFILES / BLACK METAL%s\n' "$BOLD" "$PINK" "$RESET"
+if [ "$DRY_RUN" -eq 1 ]; then note 'Dry-run — preview only; nothing will change'; fi
+stage 'Preflight' 'Check platform, repository and destination safety.'
+[ "$(uname -s)" = Darwin ] && [ "$(uname -m)" = arm64 ] || \
+  fail 'This setup requires Apple Silicon macOS (/opt/homebrew paths).'
+command -v git >/dev/null || fail 'Install Command Line Tools: xcode-select --install'
+git -C "$SOURCE" rev-parse --is-inside-work-tree >/dev/null 2>&1 || \
+  fail 'Run this from a cloned dotfiles repository.'
+[ -f "$SOURCE/pi/agent/extensions/subagent/agents.ts" ] && \
+  [ ! -L "$SOURCE/pi/agent/extensions/subagent/agents.ts" ] || \
+  fail 'The subagent helper must be a real file, not the old Homebrew symlink.'
+check_parents "$TARGET"
+# Inspect every tracked path before any installs or writes.
+while IFS= read -r -d '' rel; do
+  [ ! -L "$SOURCE/$rel" ] || fail "Tracked symlink is not portable: $rel"
+  [ -f "$SOURCE/$rel" ] || fail "Missing tracked file: $rel"
+  check_parents "$(dirname "$TARGET/$rel")"
+  [ ! -d "$TARGET/$rel" ] || fail "Destination is a directory: $TARGET/$rel"
+done < <(git -C "$SOURCE" ls-files -z)
+check_parents "$HOME/.pi"
+[ ! -d "$HOME/.zshenv" ] || fail '~/.zshenv is a directory.'
+
+printf '\n%sInstall plan%s\n' "$TEAL" "$RESET"
+printf '  Source: %s\n  Config destination: %s\n' "$SOURCE" "$TARGET"
+printf '%s\n' \
+  '  Install Homebrew dependencies, Ghostty and JetBrainsMono Nerd Font.' \
+  '  Copy tracked files only, backing up changed destination files.' \
+  '  Add a managed config/Pi environment block to ~/.zshenv (with backup).' \
+  '  Install missing Pi/Herdr through official installers; restore Pi packages.' \
+  '  Install pinned drovr and herdr-lazy plugins; validate Herdr config.' \
+  '  No credential copying, model login, session stopping or automatic prompt.'
+[ "$NVIM" -eq 0 ] || printf '  Install Neovim; bootstrap and restore its plugins.\n'
+if [ "$DRY_RUN" -eq 0 ] && [ "$YES" -eq 0 ]; then
+  printf '\n%sProceed with installation? [y/N]%s ' "$PINK" "$RESET"
+  read -r answer
+  case "$answer" in y|Y|yes) ;; *) printf 'Cancelled.\n'; exit 0 ;; esac
+fi
+
+stage 'Shell tools' 'Install Homebrew CLI dependencies and zsh plugins.'
+if [ ! -x /opt/homebrew/bin/brew ]; then
+  note 'Homebrew is missing. Install it from https://brew.sh first.'
+  [ "$DRY_RUN" -eq 1 ] || exit 1
+fi
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+if [ "$DRY_RUN" -eq 0 ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+run brew install git node python starship zoxide eza fzf ripgrep fd \
+  zsh-autosuggestions zsh-syntax-highlighting zsh-completions
+
+stage 'Terminal & font' 'Install Ghostty and JetBrainsMono Nerd Font.'
+run brew install --cask ghostty font-jetbrains-mono-nerd-font
+
+stage 'Config files' 'Copy tracked files only; back up anything being replaced.'
+if [ "$SOURCE" != "$TARGET" ]; then
+  while IFS= read -r -d '' rel; do
+    if [ ! -L "$TARGET/$rel" ] && cmp -s "$SOURCE/$rel" "$TARGET/$rel"; then
+      continue
+    fi
+    if [ "$DRY_RUN" -eq 1 ]; then
+      note "Would back up (if present) and copy: $TARGET/$rel"
+    else
+      backup "$TARGET/$rel"
+      mkdir -p "$TARGET/$(dirname "$rel")"
+      # Unlink a backed-up leaf symlink instead of following it with cp.
+      [ ! -L "$TARGET/$rel" ] || rm "$TARGET/$rel"
+      cp -p "$SOURCE/$rel" "$TARGET/$rel"
+      info "Copied $rel"
+    fi
+  done < <(git -C "$SOURCE" ls-files -z)
+else
+  note 'Repository already lives at ~/.config — no copy needed.'
+fi
+
+stage 'Shell environment' 'Connect zsh and Pi to ~/.config; preserve existing startup content.'
+if [ "$DRY_RUN" -eq 1 ]; then
+  note 'Would back up ~/.zshenv and add/update the managed environment block.'
+else
+  backup "$HOME/.zshenv"
+  # Keep existing startup content; replace only our own marked block.
+  python3 - "$HOME/.zshenv" <<'PY'
+import os, re, sys
+from pathlib import Path
+p = Path(sys.argv[1])
+text = p.read_text() if p.exists() else ''
+begin = '# >>> dotfiles install >>>'
+end = '# <<< dotfiles install <<<'
+if text.count(begin) != text.count(end) or text.count(begin) > 1:
+    raise SystemExit('Malformed managed block in ~/.zshenv; restore/review the backup.')
+text = re.sub(re.escape(begin) + r'.*?' + re.escape(end) + r'\n?', '', text, flags=re.S)
+block = '''# >>> dotfiles install >>>
+export ZDOTDIR="$HOME/.config/zsh"
+export PI_CODING_AGENT_DIR="$HOME/.config/pi/agent"
+export PATH="$PI_CODING_AGENT_DIR/bin:$HOME/.local/bin:$PATH"
+# <<< dotfiles install <<<
+'''
+# Replace the leaf rather than modifying a symlink target.
+mode = p.stat().st_mode & 0o777 if p.exists() else 0o600
+tmp = p.with_name('.zshenv.dotfiles-install-' + str(os.getpid()))
+try:
+    with tmp.open('x') as f:
+        os.chmod(tmp, mode)
+        f.write(text.rstrip() + '\n\n' + block)
+    os.replace(tmp, p)
+finally:
+    if tmp.exists(): tmp.unlink()
+PY
+fi
+export ZDOTDIR="$TARGET/zsh"
+export PI_CODING_AGENT_DIR="$TARGET/pi/agent"
+export PATH="$PI_CODING_AGENT_DIR/bin:$HOME/.local/bin:$PATH"
+
+if [ ! -e "$HOME/.pi/agent" ] && [ ! -L "$HOME/.pi/agent" ]; then
+  run mkdir -p "$HOME/.pi"
+  run ln -s "$PI_CODING_AGENT_DIR" "$HOME/.pi/agent"
+else
+  note 'Keeping existing ~/.pi/agent; PI_CODING_AGENT_DIR selects the new config.'
+fi
+
+install_official() {
+  local name="$1" url="$2" script
+  if command -v "$name" >/dev/null 2>&1; then
+    note "Keeping existing $name: $(command -v "$name")"
+    return
+  fi
+  if [ "$DRY_RUN" -eq 1 ]; then
+    note "Would download and run official installer: $url"
+    return
+  fi
+  script="$(mktemp "${TMPDIR:-/tmp}/dotfiles-installer.XXXXXX")"
+  if ! curl -fsSL "$url" -o "$script"; then rm -f "$script"; return 1; fi
+  if sh "$script"; then rm -f "$script"; else rm -f "$script"; return 1; fi
+}
+stage 'Pi & extensions' 'Install Pi if missing, then restore the declared packages.'
+install_official pi https://pi.dev/install.sh
+if [ "$DRY_RUN" -eq 0 ]; then
+  command -v pi >/dev/null || fail 'Pi is not on PATH; follow its installer instructions and rerun.'
+fi
+run pi --version
+run pi update --extensions
+run pi list
+
+stage 'Herdr & plugins' 'Install Herdr if missing, then pinned drovr and herdr-lazy plugins.'
+install_official herdr https://herdr.dev/install.sh
+if [ "$DRY_RUN" -eq 0 ]; then
+  command -v herdr >/dev/null || fail 'Herdr is not on PATH; follow its installer instructions and rerun.'
+fi
+run herdr --version
+run herdr config check
+install_plugin() {
+  if [ "$YES" -eq 1 ]; then
+    run herdr plugin install "$1" --ref "$2" --yes
+  else
+    run herdr plugin install "$1" --ref "$2"
+  fi
+}
+install_plugin AVGVSTVS96/herdr-drovr 03f38edba501f63d3f7044fc99cf3ae55438401e
+install_plugin natori-hrj/herdr-lazy 8caad442f3710be6aff6872b03069068a931b38f
+run herdr plugin enable drovr
+run herdr plugin enable herdr-lazy
+run herdr plugin list --json
+if [ "$NVIM" -eq 1 ]; then
+  stage 'Neovim (optional)' 'Install the editor and restore lazy.nvim plugin revisions.'
+  run brew install neovim
+  run nvim --headless '+Lazy! restore' +qa
+fi
+
+stage 'Final checks' 'Validate shell syntax and show the next steps.'
+run zsh -n "$TARGET/zsh/.zshrc"
+printf '\n'
+if [ "$DRY_RUN" -eq 1 ]; then
+  ok 'Dry-run complete — nothing changed.'
+  note 'Run ./install when ready (or ./install --with-nvim for editor setup).'
+else
+  ok 'Installation complete.'
+  note "Backups: ${BACKUP:-none needed}"
+  printf '\n%s%sNext steps%s\n' "$BOLD" "$TEAL" "$RESET"
+  info '1. Open a new Ghostty window.'
+  info '2. Run herdr, then pi in a pane.'
+  info '3. Use /login and /model in Pi to select an available model.'
+  printf '\n'
+  note 'No Herdr sessions were stopped. Reload with: herdr server reload-config'
+  note 'Optional development SDKs and personal aliases were not installed.'
+  note 'Review personal ~/.zshenv source commands (e.g. Cargo) on a new machine.'
+fi

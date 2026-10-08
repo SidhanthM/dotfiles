@@ -37,6 +37,30 @@ close_tab = ["prefix+shift+x"]
 close_pane = ["prefix+x", "ctrl+w"]
 
 [[keys.command]]
+key = "shift+left"
+type = "shell"
+command = "herdr pane swap --current --direction left"
+description = "swap pane left"
+
+[[keys.command]]
+key = "shift+right"
+type = "shell"
+command = "herdr pane swap --current --direction right"
+description = "swap pane right"
+
+[[keys.command]]
+key = "shift+up"
+type = "shell"
+command = "herdr pane swap --current --direction up"
+description = "swap pane up"
+
+[[keys.command]]
+key = "shift+down"
+type = "shell"
+command = "herdr pane swap --current --direction down"
+description = "swap pane down"
+
+[[keys.command]]
 key = "ctrl+shift+m"
 type = "plugin_action"
 command = "drovr.move-pane"

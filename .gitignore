@@ -3,6 +3,7 @@
 # …except what we explicitly track
 !/.gitignore
 !/README.md
+!/install
 !/assets/
 !/ghostty/
 !/herdr/

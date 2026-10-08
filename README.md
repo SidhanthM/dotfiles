@@ -2,7 +2,26 @@
 
 Personal **Apple Silicon macOS** setup: Ghostty → Herdr → Pi, plus zsh, Starship and Neovim. The repository lives directly at `~/.config`; no Stow or dotfiles symlink tree is needed.
 
-**No AI agent is required.** Follow the stages in order and stop at a failed check. Installation downloads executable third-party software; review sources and installer scripts before running them.
+## Quick install
+
+On Apple Silicon macOS, install Command Line Tools (`xcode-select --install`) and [Homebrew](https://brew.sh/) first. Then:
+
+```sh
+git clone https://github.com/SidhanthM/dotfiles.git ~/dotfiles-setup
+cd ~/dotfiles-setup
+./install --dry-run
+./install
+# Optional editor setup:
+# ./install --with-nvim
+```
+
+`./install` installs dependencies, copies tracked configs into `~/.config`, sets up zsh/Pi environment variables, installs missing Pi/Herdr, restores Pi packages, and installs the two pinned Herdr plugins. Existing changed files are backed up under `~/.dotfiles-backups`; unrelated app state is preserved. Reruns reconcile the same setup. `--yes` skips the script's confirmation and approves Herdr plugin code, but official installers may still prompt.
+
+If this repo already lives at `~/.config`, run `./install` there; no config copying is needed. From another checkout, configs are copied as real files, not symlinked, and the source checkout remains your Git repository. Update that checkout and rerun the installer to deploy changes. Running the installer may replace locally edited config files, but backs them up first.
+
+Open a new Ghostty window afterwards, run `herdr`, then `pi`, and use `/login` and `/model`. The installer does not copy credentials, send model requests, stop Herdr sessions, change your login shell, or install optional development SDKs. Existing Pi/Herdr executables are kept rather than silently upgraded. Symlink config directories are rejected for safety. Review the personal shell aliases and any preexisting `~/.zshenv` commands on a new machine.
+
+The sections below explain the equivalent manual steps and troubleshooting. **No AI agent is required.** Installation downloads executable third-party software; review `install`, sources and installer scripts before running them.
 
 ## What gets restored
 
