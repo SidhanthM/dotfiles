@@ -47,3 +47,6 @@ key = "ctrl+shift+alt+m"
 type = "plugin_action"
 command = "drovr.move-tab"
 description = "move tab to workspace"
+
+[ui.sound]
+enabled = false
