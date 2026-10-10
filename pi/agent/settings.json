@@ -12,11 +12,10 @@
     "npm:pi-effort",
     "npm:pi-web-search",
     "npm:pi-commandcode-provider",
-    "npm:pi-observational-memory",
-    "npm:pi-job-search"
+    "npm:pi-observational-memory"
   ],
   "pi-effort": {
-    "fastMode": false
+    "fastMode": true
   },
   "observational-memory": {
     "model": {

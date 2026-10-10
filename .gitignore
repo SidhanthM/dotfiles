@@ -13,6 +13,7 @@ herdr/*
 pi/agent/*
 !pi/agent/settings.json
 !pi/agent/mcp.json
+!pi/agent/assets/
 !pi/agent/themes/
 !pi/agent/extensions/
 !pi/agent/skills/
