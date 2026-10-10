@@ -30,7 +30,7 @@ peach = "#a06666"
 # Direct (prefix-free) shortcuts. Each also keeps the default prefix binding.
 new_tab = ["prefix+c", "ctrl+n"]
 split_vertical = ["prefix+v", "ctrl+d"]       # split right
-split_horizontal = ["prefix+minus", "ctrl+x"] # split down
+split_horizontal = ["prefix+minus", "ctrl+j"] # split down
 new_workspace = ["prefix+shift+n", "ctrl+shift+n"]
 close_workspace = ["prefix+shift+d", "ctrl+shift+w"]
 close_tab = ["prefix+shift+x"]
