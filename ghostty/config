@@ -18,8 +18,8 @@ background-opacity = 0.91
 background-blur-radius = 10
 
 # Cursor
-cursor-style = block
-cursor-style-blink = false
+cursor-style = underline
+cursor-style-blink = true
 shell-integration-features = no-cursor
 
 # Keybindings
@@ -42,7 +42,7 @@ mouse-scroll-multiplier = 2
 
 background = #141414
 foreground = #c1c1c1
-cursor-color = #c1c1c1
+cursor-color = #d18588
 cursor-text = #8e8e8e
 selection-background = #c1c1c1
 selection-foreground = #000000

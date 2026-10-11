@@ -56,7 +56,7 @@ export default function (pi: ExtensionAPI) {
       render(width: number): string[] {
         if (width < 1) return [];
         const artwork = width >= 28 ? OUROBOROS : width >= 24 ? COMPACT_OUROBOROS : [];
-        const title = theme.bold(theme.fg("accent", "Ouroboros")) + theme.fg("dim", ` · Pi v${VERSION}`);
+        const title = theme.fg("dim", `Pi v${VERSION}`);
         const hints = [
           rawKeyHint("escape", "interrupt"),
           rawKeyHint("ctrl+c", "clear / exit"),

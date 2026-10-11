@@ -49,8 +49,8 @@ truncation_length = 4
 truncate_to_repo = false
 
 [character]
-success_symbol = "[❯](fg:pink)"
-error_symbol = "[❯](fg:red)"
+success_symbol = "[❯](fg:text)"
+error_symbol = "[❯](fg:text)"
 vicmd_symbol = "[❮](fg:teal)"
 
 [git_branch]

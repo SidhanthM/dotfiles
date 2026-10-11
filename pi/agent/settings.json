@@ -15,7 +15,7 @@
     "npm:pi-observational-memory"
   ],
   "pi-effort": {
-    "fastMode": true
+    "fastMode": false
   },
   "observational-memory": {
     "model": {
