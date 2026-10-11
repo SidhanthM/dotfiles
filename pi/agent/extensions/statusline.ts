@@ -30,12 +30,11 @@ export default function (pi: ExtensionAPI) {
 
     class FastModeEditor extends CustomEditor {
       override render(width: number): string[] {
-        // Pi's editor fakes its cursor with reverse video. Replace it with the same
-        // muted-rose, slowly blinking underline used by Ghostty (SGR 5 = slow blink).
-        // Use foreground color (38), since Pi's ANSI tracker doesn't preserve SGR 58 underline colors.
-        const underline = "\x1b[4;5;38;2;209;133;136m";
+        // The cursor marker positions Ghostty's native cursor. Strip Pi's fake
+        // reverse-video cursor so the native blinking rose underline is visible,
+        // and so no styled cursor cells are left in the screen when Pi exits.
         return super.render(width).map((line) =>
-          line.replace(/\x1b\[7m([\s\S]*?)\x1b\[0m/g, `${underline}$1\x1b[0m`),
+          line.replace(/\x1b\[7m([\s\S]*?)\x1b\[0m/g, "$1"),
         );
       }
 

@@ -8,6 +8,7 @@
     "deepseek/deepseek-v4-flash": "high"
   },
   "tuiMode": "fullscreen",
+  "showHardwareCursor": true,
   "packages": [
     "npm:pi-effort",
     "npm:pi-web-search",
