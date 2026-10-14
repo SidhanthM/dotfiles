@@ -64,3 +64,5 @@ palette = 12=#888888
 palette = 13=#999999
 palette = 14=#aaaaaa
 palette = 15=#c1c1c1
+
+macos-icon = xray

@@ -13,39 +13,39 @@ import {
 
 const ART_COLOR = rgbColor(255, 255, 255);
 
-// A 56 × 56 dot sample of the reference, packed into 28 columns × 14 rows.
-// Braille dots: left column 1/2/3/7, right column 4/5/6/8.
+// The 56 × 56 dot sample, pre-flipped horizontally, packed into 28 columns × 14 rows.
+// Braille cells and their left/right dot columns are both mirrored so the dragon faces right.
 const OUROBOROS = [
-  "        ⢀⣠⣆",
-  "        ⠸⢿⣿⣷⣤⣠⣤⣾⣠⠄",
-  "       ⢰⡤⢤⡙⢻⡟⢩⡉⣿⣿⣿⠤⣴",
-  "       ⣿⠰⠆⣹⠛⣷⣤⣴⣿⣿⡇⠶⢈⡇",
-  "   ⢤⡴⠒⢶⡟⠙⠛⣁⣼⣿⠟⠋⠉ ⠉⠛⠻⣿⠖⠲⣤⠄",
-  "   ⠘⣇⣛⣠⠇  ⠺⣿⡏       ⢿⣘⣃⡾",
-  "   ⣠⣼⣟⠁     ⠁        ⠈⣿⣧⣀",
-  " ⠠⢾⠁⠦⢹⠆              ⢸⠁⠦⢹⠦",
-  "  ⠈⠓⢶⡏               ⠈⣷⡖⠋",
-  "   ⢠⡞⣉⠻⡆            ⣴⢋⡙⢧",
-  "   ⠼⠧⣬⣴⣇⣀⣀⡀      ⢀⣀⣀⣿⣬⡥⠟⠄",
-  "       ⣿⢡⡄⢻⣀⣠⠶⠦⣄⣰⡏⣤⠘⡇",
-  "       ⢸⠶⠖⠋⠙⣇⡘⢂⡿⠛⠓⠶⢾⠁",
-  "            ⠈⠹⠉",
+  "                 ⣰⣄⡀",
+  "          ⠠⣄⣷⣤⣄⣤⣾⣿⡿⠇",
+  "        ⣦⠤⣿⣿⣿⢉⡍⢻⡟⢋⡤⢤⡆",
+  "       ⢸⡁⠶⢸⣿⣿⣦⣤⣾⠛⣏⠰⠆⣿",
+  "   ⠠⣤⠖⠲⣿⠟⠛⠉ ⠉⠙⠻⣿⣧⣈⠛⠋⢻⡶⠒⢦⡤",
+  "    ⢷⣘⣃⡿       ⢹⣿⠗  ⠸⣄⣛⣸⠃",
+  "   ⣀⣼⣿⠁        ⠈     ⠈⣻⣧⣄",
+  "  ⠴⡏⠴⠈⡇              ⠰⡏⠴⠈⡷⠄",
+  "   ⠙⢲⣾⠁               ⢹⡶⠚⠁",
+  "    ⡼⢋⡙⣦            ⢰⠟⣉⢳⡄",
+  "   ⠠⠻⢬⣥⣿⣀⣀⡀      ⢀⣀⣀⣸⣦⣥⠼⠧",
+  "       ⢸⠃⣤⢹⣆⣠⠴⠶⣄⣀⡟⢠⡌⣿",
+  "       ⠈⡷⠶⠚⠛⢿⡐⢃⣸⠋⠙⠲⠶⡇",
+  "             ⠉⠏⠁",
 ];
 
-// Independently sampled at 48 × 48 dots for narrower panes.
+// Independently sampled at 48 × 48 dots for narrower panes, also pre-flipped.
 const COMPACT_OUROBOROS = [
-  "       ⢠⣴⡄   ⢀",
-  "       ⠙⢿⣿⣶⣤⣶⣧⣖⡀",
-  "      ⡼⢛⠲⣭⣿⡰⢂⣿⣿⢛⡛⡄",
-  "  ⢀⣀⣠⣤⡷⠬⠴⢃⣿⣿⠿⠟⠛⠬⢴⣧⣠⣄⣀",
-  "   ⢯⠰⢈⡇ ⠠⣿⡿⠁     ⢿⠰⢂⡇",
-  "  ⢀⣸⣿⠉    ⠁       ⠉⣿⣄",
-  " ⠰⣏⠰⢨⠇            ⢸⠰⢆⡷",
-  "  ⠈⢹⣿⣀            ⣠⣿⠋",
-  "   ⣾⠰⢈⡇          ⢾⠰⢈⡇",
-  "  ⠈⠈⠙⠙⡷⢒⠲⡄ ⣀⣀ ⣠⢒⡲⡟⠙⠉⠈",
-  "      ⢳⠬⠴⠛⢾⠰⢌⡿⠿⠬⢴⠃",
-  "          ⠈⠹⠋",
+  "          ⡀   ⢠⣦⡄",
+  "        ⢀⣲⣼⣶⣤⣶⣿⡿⠋",
+  "      ⢠⢛⡛⣿⣿⡐⢆⣿⣭⠖⡛⢧",
+  "   ⣀⣠⣄⣼⡦⠥⠛⠻⠿⣿⣿⡘⠦⠥⢾⣤⣄⣀⡀",
+  "   ⢸⡐⠆⡿     ⠈⢿⣿⠄ ⢸⡁⠆⡽",
+  "   ⣠⣿⠉       ⠈    ⠉⣿⣇⡀",
+  "  ⢾⡰⠆⡇            ⠸⡅⠆⣹⠆",
+  "   ⠙⣿⣄            ⣀⣿⡏⠁",
+  "   ⢸⡁⠆⡷          ⢸⡁⠆⣷",
+  "   ⠁⠉⠋⢻⢖⡒⣄ ⣀⣀ ⢠⠖⡒⢾⠋⠋⠁⠁",
+  "      ⠘⡦⠥⠿⢿⡡⠆⡷⠛⠦⠥⡞",
+  "           ⠙⠏⠁",
 ];
 
 export default function (pi: ExtensionAPI) {
