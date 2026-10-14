@@ -24,7 +24,7 @@ export default function (pi: ExtensionAPI) {
       try {
         fast = JSON.parse(readFileSync(settingsPath, "utf8"))["pi-effort"]?.fastMode === true;
       } catch { /* Missing or invalid settings: fast mode off. */ }
-      const eligible = ["openai", "openai-codex", "azure-openai-responses"].includes(ctx.model?.provider ?? "") && ctx.model?.id.startsWith("gpt-5");
+      const eligible = ["openai", "azure-openai-responses"].includes(ctx.model?.provider ?? "") && ctx.model?.id.startsWith("gpt-5");
       return !fast ? muted("ϟ") : eligible ? teal("ϟ") : pink("ϟ");
     };
 

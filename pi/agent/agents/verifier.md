@@ -1,7 +1,7 @@
 ---
 name: verifier
 description: Fresh-context adversarial verification of completed work. Use after any non-trivial change, before reporting done - give it the claimed outcome and diff/paths; it independently tries to refute the claim by exercising code, running tests, probing edge cases. Returns CONFIRMED or REFUTED with evidence. Read-and-run only; never fixes.
-model: openai-codex/gpt-5.6-terra:medium
+model: openai/gpt-5.6-terra:medium
 tools: read, grep, find, ls, bash
 ---
 
