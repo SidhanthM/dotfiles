@@ -1,0 +1,7 @@
+.DS_Store
+zsh/local.zsh
+zsh/.zsh_history
+zsh/.zsh_sessions/
+zsh/.zcompdump*
+nvim/doc/tags
+*.bak

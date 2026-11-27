@@ -1,0 +1,83 @@
+# Black Metal palette — Vesper black, muted steel, dusty pink, and teal
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = true
+command_timeout = 200
+palette = "black_metal"
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$git_metrics\
+$fill\
+$nodejs\
+$cmd_duration $jobs\
+$line_break\
+$character"""
+
+[palettes.black_metal]
+text = "#c1c1c1"
+muted = "#888888"
+teal = "#52999b"
+blue_gray = "#6d9a9c"
+pink = "#d18588"
+red = "#c85c70"
+
+[username]
+style_user = "fg:teal"
+style_root = "fg:pink"
+
+[hostname]
+ssh_only = true
+style = "fg:muted"
+format = "[@$hostname]($style) "
+
+[nodejs]
+format = "[$symbol($version )](fg:teal)"
+
+[fill]
+symbol = " "
+
+[directory]
+style = "fg:blue_gray bold"
+read_only = " "
+read_only_style = "fg:pink"
+truncation_length = 4
+truncate_to_repo = false
+
+[character]
+success_symbol = "[❯](fg:text)"
+error_symbol = "[❯](fg:text)"
+vicmd_symbol = "[❮](fg:teal)"
+
+[git_branch]
+symbol = " "
+format = "[$symbol$branch]($style) "
+style = "fg:muted"
+
+[jobs]
+symbol = ""
+style = "bold fg:red"
+number_threshold = 1
+format = "[$symbol]($style)"
+
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
+style = "fg:pink"
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "fg:muted"
+
+[git_metrics]
+disabled = false
+added_style = "fg:teal"
+deleted_style = "fg:pink"
+
+[cmd_duration]
+format = "[$duration]($style)"
+style = "fg:pink"
+
